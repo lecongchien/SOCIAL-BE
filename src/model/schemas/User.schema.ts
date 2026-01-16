@@ -1,17 +1,17 @@
 import { ObjectId } from "mongodb";
-// import { UserVerifyStatus } from "~/constants/enums";
+import { UserVerifyStatus } from "~/constants/enums";
 
 interface UserType {
   _id?: ObjectId;
-  name: string;
+  name?: string;
   email: string;
-  date_of_birth: Date;
+  date_of_birth?: Date;
   password: string;
   created_at?: Date;
   updated_at?: Date;
   email_verify_token?: string;
   forgot_password_token?: string;
-  // verify?: UserVerifyStatus;
+  verify?: UserVerifyStatus;
   twitter_circle?: ObjectId[];
   bio?: string;
   location?: string;
@@ -31,7 +31,7 @@ export default class User {
   updated_at: Date;
   email_verify_token: string; // jwt hoặc '' nếu đã xác thực email
   forgot_password_token: string; // jwt hoặc '' nếu đã xác thực email
-  // verify: UserVerifyStatus;
+  verify: UserVerifyStatus;
   twitter_circle: ObjectId[]; // danh sách id của những người user này add vào circle
   bio: string; // optional
   location: string; // optional
@@ -51,7 +51,7 @@ export default class User {
     this.updated_at = user.updated_at || date;
     this.email_verify_token = user.email_verify_token || "";
     this.forgot_password_token = user.forgot_password_token || "";
-    // this.verify = user.verify || UserVerifyStatus.Unverified;
+    this.verify = user.verify || UserVerifyStatus.Unverified;
     this.twitter_circle = user.twitter_circle || [];
     this.bio = user.bio || "";
     this.location = user.location || "";

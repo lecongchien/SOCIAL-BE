@@ -18,8 +18,10 @@ class DatabateService {
   async connect() {
     try {
       await this.db.command({ ping: 1 });
-    } finally {
-      await client.close();
+    } catch (error) {
+      console.log(error, "error");
+      throw new Error("Could not connect to the database");
+      // await client.close();
     }
   }
 
