@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import userService from "~/services/users.services";
 
 export const loginController = (req: Request, res: Response) => {
@@ -12,7 +12,11 @@ export const loginController = (req: Request, res: Response) => {
   return res.status(401).json({ error: "Invalid credentials" });
 };
 
-export const registerController = async (req: Request, res: Response) => {
+export const registerController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { email, password } = req.body;
   try {
     const result = await userService.register({ email, password });
@@ -21,6 +25,6 @@ export const registerController = async (req: Request, res: Response) => {
       result,
     });
   } catch (error) {
-    return res.status(400).json({ error: "Register failed" });
+    next(error);
   }
 };

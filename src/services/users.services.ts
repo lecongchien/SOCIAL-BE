@@ -15,7 +15,6 @@ class UserService {
 
   async checkEmailExists(email: string): Promise<boolean> {
     const user = await databateService.users.findOne({ email });
-    console.log(user);
     return Boolean(user);
   }
 }
