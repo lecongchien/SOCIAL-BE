@@ -11,6 +11,17 @@ app.get("/", (req, res) => {
 app.use(express.json());
 databateService.connect();
 
+app.use(
+  (
+    err: any,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    console.log(err);
+    res.status(404).json({ message: "Internal server error" });
+  },
+);
 // Mount user routes
 app.use("/users", userRouter);
 

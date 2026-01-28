@@ -7,11 +7,16 @@ import {
   loginValidation,
   registerValidation,
 } from "~/middlewares/users.middlewares";
+import { wrapRequestHandler } from "~/utils/handlers";
 
 const userRouter = Router();
 
 userRouter.post("/login", loginValidation, loginController);
 
-userRouter.post("/register", registerValidation, registerController);
+userRouter.post(
+  "/register",
+  registerValidation,
+  wrapRequestHandler(registerController),
+);
 
 export default userRouter;

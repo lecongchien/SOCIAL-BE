@@ -2,31 +2,51 @@ import { Collection, Db, MongoClient } from "mongodb";
 import { config } from "dotenv";
 import User from "~/model/schemas/User.schema";
 config();
-const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}/?appName=database`;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri);
+const { DB_USERNAME, DB_PASSWORD, DB_CLUSTER, DB_NAME, USERS_COLLECTION } =
+  process.env;
+
+if (
+  !DB_USERNAME ||
+  !DB_PASSWORD ||
+  !DB_CLUSTER ||
+  !DB_NAME ||
+  !USERS_COLLECTION
+) {
+  console.warn("Missing required DB env variables");
+}
+
+const uri = `mongodb+srv://${encodeURIComponent(DB_USERNAME as string)}:${encodeURIComponent(
+  DB_PASSWORD as string,
+)}@${DB_CLUSTER}/?appName=database`;
 
 class DatabateService {
   private client: MongoClient;
-  private db: Db;
+  private db?: Db;
+
   constructor() {
     this.client = new MongoClient(uri);
-    this.db = this.client.db(process.env.DB_NAME);
   }
 
   async connect() {
     try {
+      await this.client.connect();
+      this.db = this.client.db(DB_NAME);
       await this.db.command({ ping: 1 });
+      console.log("Connected to database");
     } catch (error) {
-      console.log(error, "error");
-      throw new Error("Could not connect to the database");
-      // await client.close();
+      console.error("Could not connect to the database", error);
+      throw error;
     }
   }
 
   get users(): Collection<User> {
-    return this.db.collection(process.env.USERS_COLLECTION as string);
+    if (!this.db) {
+      throw new Error(
+        "Database not connected. Call databateService.connect() first.",
+      );
+    }
+    return this.db.collection(USERS_COLLECTION as string);
   }
 }
 
